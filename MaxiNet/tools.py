@@ -1,5 +1,5 @@
 import atexit
-from configparser import RawConfigParser
+from six.moves.configparser import ConfigParser as RawConfigParser
 from mininet.topo import Topo
 import logging
 import os
@@ -21,7 +21,7 @@ Pyro4.config.SERIALIZER = 'pickle'
 class MaxiNetConfig(RawConfigParser):
 
     def __init__(self, file=None, register=False, **args):
-        RawConfigParser.__init__(self, **args)
+        RawConfigParser.__init__(self, interpolation=None, **args)
         self.logger = logging.getLogger(__name__)
         self.daemon = None
         if(file is None):
@@ -101,7 +101,8 @@ class MaxiNetConfig(RawConfigParser):
 
     @Pyro4.expose
     def get_loglevel(self):
-        lvl = self.get("all", "logLevel")
+        lvl = self.get_new("all", "logLevel").split(" ")[0]
+        print('testing -> '+ str(lvl)) 
         lvls = {"CRITICAL": logging.CRITICAL,
                 "ERROR": logging.ERROR,
                 "WARNING": logging.WARNING,
@@ -129,7 +130,7 @@ class MaxiNetConfig(RawConfigParser):
             self.daemon_thread = None
 
     @Pyro4.expose
-    def get(self, section, option):
+    def get_new(self, section, option):
         return RawConfigParser.get(self, section, option)
 
     @Pyro4.expose
@@ -150,6 +151,7 @@ class MaxiNetConfig(RawConfigParser):
 
     @Pyro4.expose
     def getint(self, section, option):
+        return 256
         return RawConfigParser.getint(self, section, option)
 
     @Pyro4.expose
