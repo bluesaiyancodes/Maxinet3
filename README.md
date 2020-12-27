@@ -10,28 +10,29 @@ Install dependencies
 > sudo apt-get install git autoconf screen cmake build-essential sysstat python-matplotlib uuid-runtime python-pip
 
 
-Install containernet and OpenVSwitch
-> git clone https://github.com/containernet/containernet.git
-> sudo apt-get install ansible git aptitude
-> cd containernet/ansible
-> sudo ansible-playbook -i "localhost," -c local install.yml
-> cd .. && sudo make install
-Install metis
-> wget http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/metis-5.1.0.tar.gz
-> tar -xzf metis-5.1.0.tar.gz
-> rm metis-5.1.0.tar.gz
-> cd metis-5.1.0
-> make config
-> make
-> sudo make install
+### Install containernet and OpenVSwitch
+> 1. git clone https://github.com/containernet/containernet.git
+> 2. sudo apt-get install ansible git aptitude
+> 3. cd containernet/ansible
+> 4. sudo ansible-playbook -i "localhost," -c local install.yml
+> 5. cd .. && sudo make install
 
-Install Pyro4
+### Install metis
+> 1. wget http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/metis-5.1.0.tar.gz
+> 2. tar -xzf metis-5.1.0.tar.gz
+> 3. rm metis-5.1.0.tar.gz
+> 4. cd metis-5.1.0
+> 5. make config
+> 6. make
+> 7. sudo make install
+
+### Install Pyro4
 > sudo pip install Pyro4
 
-Download and install MaxiNet
-> git clone https://github.com/bluesaiyancodes/Maxinet3.git
-> cd MaxiNet
-> sudo make install
+### Download and install MaxiNet
+> 1. git clone https://github.com/bluesaiyancodes/Maxinet3.git
+> 2. cd MaxiNet
+> 3. sudo make install
 
 Set up clusr and configure MaxiNet
 Repeat above (1-5) steps for every pc you want to use as a worker or frontend.
@@ -49,6 +50,6 @@ Copy the ./MaxiNet.cfg file to all worker machines.
 
 Start MaxiNet
 On the frontend machine call
-> MaxiNetFrontendServer
+> sudo MaxiNetFrontendServer
 On every worker machine call
 > sudo MaxiNetWorker
