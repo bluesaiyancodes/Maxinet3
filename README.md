@@ -48,8 +48,9 @@ configuration file this is nothing one should depend on.
 
 Copy the ./MaxiNet.cfg file to all worker machines.
 
-Start MaxiNet
+### Start MaxiNet
 On the frontend machine call
-> sudo MaxiNetFrontendServer
+> 1. sudo MaxiNetFrontendServer
+
 On every worker machine call
-> sudo MaxiNetWorker
+> 1. sudo MaxiNetWorker
