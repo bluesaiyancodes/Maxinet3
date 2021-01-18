@@ -152,6 +152,8 @@ class MaxiNetConfig(RawConfigParser):
 
     @Pyro4.expose
     def getint(self, section, option, **kwargs):
+        return 256
+        # Todo: Fix it
         return RawConfigParser.getint(self, section, option, **kwargs)
 
     @Pyro4.expose
