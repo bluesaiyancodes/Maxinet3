@@ -139,15 +139,19 @@ class WorkerServer(object):
         self.config = Pyro4.Proxy(self._ns.lookup("config"))
         self.config._pyroHmacKey=password
         self.ip = self.config.get_worker_ip(self.get_hostname())
+        print("Worker ip -> "+ str(self.ip))
+        print("Worker hostname -> " + str(self.get_hostname()))
+        print("Type -> ", type(self.get_hostname()))
         if(not self.ip):
             self.ip = Tools.guess_ip()
+            print("IP - " + str(Tools.guess_ip()))
             if not self.config.has_section(self.get_hostname()):
                 self.config.add_section(self.get_hostname())
             self.config.set(self.get_hostname(), "ip", self.ip)
             self.logger.warn("""FrontendServer did not know IP of this host (check configuration for hostname).
                              Guessed: %s""" % self.ip)
         self.logger.info("configuring and starting ssh daemon...")
-        self.sshManager = SSH_Manager(folder=self.ssh_folder, ip=self.ip, port=self.config.get_sshd_port(), user=self.config.get("all", "sshuser"))
+        self.sshManager = SSH_Manager(folder=self.ssh_folder, ip=self.ip, port=self.config.get_sshd_port(), user="root")
         self.sshManager.start_sshd()
         self._pyrodaemon = Pyro4.Daemon(host=self.ip)
         self._pyrodaemon._pyroHmacKey=password
@@ -180,7 +184,7 @@ class WorkerServer(object):
 
     @Pyro4.expose
     def get_hostname(self):
-        return subprocess.check_output(["hostname"]).strip()
+        return str(subprocess.check_output(["hostname"]).strip())
 
     def _stop(self):
         self.logger.info("signing out...")

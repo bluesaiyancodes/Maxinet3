@@ -385,5 +385,6 @@ class Tools(object):
 
     @staticmethod
     def guess_ip():
-        ip = subprocess.check_output("ifconfig -a | awk '/(cast)/ { print $2 }' | cut -d':' -f2 | head -1", shell=True)
-        return ip.strip()
+        ips = subprocess.check_output("ifconfig -a | awk '/(cast)/ { print $2 }' | cut -d':' -f2", shell=True)
+        ip_list = str(ips)[1:].replace("'", "").split("\\n")
+        return ip_list[1].strip()
