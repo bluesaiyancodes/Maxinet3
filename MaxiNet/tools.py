@@ -102,7 +102,7 @@ class MaxiNetConfig(RawConfigParser):
 
     @Pyro4.expose
     def get_loglevel(self):
-        lvl = self.get_new("all", "logLevel").split(" ")[0]
+        lvl = self.get("all", "logLevel").split(" ")[0]
         print('testing -> '+ str(lvl)) 
         lvls = {"CRITICAL": logging.CRITICAL,
                 "ERROR": logging.ERROR,
