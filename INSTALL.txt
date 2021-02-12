@@ -1,4 +1,4 @@
-MaxiNet installation
+# MaxiNet installation
 
 Introduction:
 MaxiNet is a distributed version of mininet where multiple mininet instances
