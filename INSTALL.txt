@@ -91,4 +91,6 @@ Start an OpenFlow controller for example by calling
 Now run in a new terminal,
 > python3 /usr/local/share/MaxiNet/examples/simplePing.py
 
+> python3 /usr/local/share/MaxiNet/examples/testconfig.py
+
 Congratulations, you just set up your own SDN!
