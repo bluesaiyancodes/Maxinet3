@@ -77,6 +77,7 @@ Copy the ./MaxiNet.cfg file to all worker machines.
 ### 7. Start MaxiNet
 On the frontend machine call
 > sudo MaxiNetFrontendServer
+
 On every worker machine call
 > sudo MaxiNetWorker
 
@@ -86,4 +87,5 @@ Start an OpenFlow controller for example by calling
 
 Now run in a new terminal,
 > python3 /usr/local/share/MaxiNet/examples/simplePing.py
+
 Congratulations, you just set up your own SDN!
