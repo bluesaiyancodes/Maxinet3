@@ -15,10 +15,6 @@ measures are in place to prevent unauthorized access, it is strongly disadvised
 to run MaxiNet on an untrusted or publicly accessible network.
 
 
-Supported Operating Systems:
-Debian 8
-Ubuntu 14.04
-
 
 ## manual installation 
 
