@@ -36,17 +36,26 @@ Ubuntu 14.04
 
 ### 2. Install mininet 
 > cd ~/Documents/
+
 > git clone git://github.com/mininet/mininet
+
 > sudo mininet/util/install.sh -a
 
 ### 3. Install metis
 > cd ~/Documents/
+
 > wget http://glaros.dtc.umn.edu/gkhome/fetch/sw/metis/metis-5.1.0.tar.gz
+
 > tar -xzf metis-5.1.0.tar.gz
+
 > rm metis-5.1.0.tar.gz
+
 > cd metis-5.1.0
+
 > make config
+
 > make
+
 > sudo make install
 
 ### 4. Install Pyro4
@@ -54,9 +63,13 @@ Ubuntu 14.04
 
 ### 5. Download and install MaxiNet
 > cd ~/Documents
+
 > git clone https://github.com/bluesaiyancodes/Maxinet3.git
+
 > cd MaxiNet
+
 > git checkout 3.4
+
 > sudo make install
 
 ### 6. Set up cluster and configure MaxiNet
@@ -64,6 +77,7 @@ Repeat above (1-5) steps for every pc you want to use as a worker or frontend.
 
 On the frontend machine copy the MaxiNet-cfg-sample file to ~/.MaxiNet.cfg and edit the file.
 > cp share/MaxiNet-cfg-sample ~/.MaxiNet.cfg
+
 > vi ~/.MaxiNet.cfg
 
 Please note that every worker connecting to the MaxiNet Server will need an respective
