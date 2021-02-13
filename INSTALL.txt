@@ -65,7 +65,7 @@ to run MaxiNet on an untrusted or publicly accessible network.
 Repeat above (1-5) steps for every pc you want to use as a worker or frontend.
 
 On the frontend machine copy the MaxiNet-cfg-sample file to ~/.MaxiNet.cfg and edit the file.
-> cp share/MaxiNet-cfg-sample ~/.MaxiNet.cfg
+> cp share/MaxiNet.cfg ~/.MaxiNet.cfg
 
 > vi ~/.MaxiNet.cfg
 
