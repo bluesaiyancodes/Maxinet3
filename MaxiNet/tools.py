@@ -77,7 +77,10 @@ class MaxiNetConfig(RawConfigParser):
     @Pyro4.expose
     def run_with_1500_mtu(self):
         if(self.has_option("all","runWith1500MTU")):
-            return self.getboolean("all","runWith1500MTU")
+            temp = self.getString("all","runWith1500MTU")
+            print("test ->")
+            print(temp.split(";")[0].trim())
+            return self.getBoolean("all", "runWith1500MTU")
         return False
 
     @Pyro4.expose
@@ -152,8 +155,6 @@ class MaxiNetConfig(RawConfigParser):
 
     @Pyro4.expose
     def getint(self, section, option, **kwargs):
-        return 256
-        # Todo: Fix it
         return RawConfigParser.getint(self, section, option, **kwargs)
 
     @Pyro4.expose
