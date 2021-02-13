@@ -57,7 +57,7 @@ to run MaxiNet on an untrusted or publicly accessible network.
 
 > cd MaxiNet
 
-> git checkout 3.4
+> git checkout 3.5
 
 > sudo make install
 
