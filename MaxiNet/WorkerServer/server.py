@@ -1,4 +1,4 @@
-#!/usr/bin/python2
+#!/usr/bin/env python3
 
 import argparse
 import atexit
@@ -9,6 +9,7 @@ import subprocess
 import sys
 import tempfile
 import time
+from subprocess import CalledProcessError
 
 from mininet.node import UserSwitch, OVSSwitch
 from mininet.link import Link, TCIntf
@@ -139,15 +140,19 @@ class WorkerServer(object):
         self.config = Pyro4.Proxy(self._ns.lookup("config"))
         self.config._pyroHmacKey=password
         self.ip = self.config.get_worker_ip(self.get_hostname())
+        print("Worker ip -> "+ str(self.ip))
+        print("Worker hostname -> " + str(self.get_hostname()))
+        print("Type -> ", type(self.get_hostname()))
         if(not self.ip):
             self.ip = Tools.guess_ip()
+            print("IP - " + str(Tools.guess_ip()))
             if not self.config.has_section(self.get_hostname()):
                 self.config.add_section(self.get_hostname())
             self.config.set(self.get_hostname(), "ip", self.ip)
             self.logger.warn("""FrontendServer did not know IP of this host (check configuration for hostname).
                              Guessed: %s""" % self.ip)
         self.logger.info("configuring and starting ssh daemon...")
-        self.sshManager = SSH_Manager(folder=self.ssh_folder, ip=self.ip, port=self.config.get_sshd_port(), user=self.config.get("all", "sshuser"))
+        self.sshManager = SSH_Manager(folder=self.ssh_folder, ip=self.ip, port=self.config.get_sshd_port(), user="root")
         self.sshManager.start_sshd()
         self._pyrodaemon = Pyro4.Daemon(host=self.ip)
         self._pyrodaemon._pyroHmacKey=password
@@ -180,7 +185,7 @@ class WorkerServer(object):
 
     @Pyro4.expose
     def get_hostname(self):
-        return subprocess.check_output(["hostname"]).strip()
+        return str(subprocess.check_output(["hostname"]).decode(sys.stdout.encoding).strip())
 
     def _stop(self):
         self.logger.info("signing out...")
@@ -221,8 +226,15 @@ class WorkerServer(object):
             Shell output of command
         """
         self.logger.debug("Executing %s" % cmd)
-        return subprocess.check_output(cmd, shell=True,
-                                       stderr=subprocess.STDOUT).strip()
+        try:
+            return subprocess.check_output(cmd, shell=True,
+                                           stderr=subprocess.STDOUT).decode(sys.stdout.encoding).strip()
+        except CalledProcessError as e:
+            self.logger.warn("Execution of '%s', output: '%s', returncode: '%s'" % (cmd, e.output, e.returncode))
+            print("Error ex", e)
+        return ''
+        #return subprocess.check_output(cmd, shell=True,
+         #                              stderr=subprocess.STDOUT).strip()
 
     @Pyro4.expose
     def script_check_output(self, cmd):
@@ -253,6 +265,7 @@ class WorkerServer(object):
         Args:
             command: command to call with optional parameters
         """
+        self.logger.debug("Daemonizing %s" % cmd)
         p = subprocess.Popen(cmd, shell=True)
         atexit.register(p.terminate)
 
@@ -320,14 +333,14 @@ class MininetManager(object):
         for tunnel in tunnels:
             port = None
             cls = None
-            if "node1" not in tunnel[2].keys():
+            if "node1" not in list(tunnel[2].keys()):
                self.logger.info("Error! node1 is missing in tunnel metadata")
             if tunnel[2]["node1"] in topo.nodes():
                port = tunnel[2]["port1"]
             else:
                port = tunnel[2]["port2"]
 
-            if "cls" in tunnel[2].keys():
+            if "cls" in list(tunnel[2].keys()):
                 cls = tunnel[2]["cls"]
                 del tunnel[2]["cls"]
             self.addTunnel(tunnel[0], tunnel[1], port, cls, STT=STT, **tunnel[2])

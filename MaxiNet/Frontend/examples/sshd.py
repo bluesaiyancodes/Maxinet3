@@ -1,4 +1,5 @@
-#!/usr/bin/python2
+#!/usr/bin/env python3
+
 
 #
 # Start sshd on the emulated hosts and create a specialized host
@@ -60,8 +61,8 @@ exp.addLink("s3", "s1", autoconf=True)
 # Therefore we cannot set the IP before.
 exp.get("root").setIP("10.0.0.3", 8)
 
-print "*** You may now ssh into", h1.name, "at", h1.IP(), "or", h2.name,\
-      "at", h2.IP()
-print "Press [Enter] to end MaxiNet"
-raw_input()
+print ("*** You may now ssh into", h1.name, "at", h1.IP(), "or", h2.name,\
+      "at", h2.IP())
+print ("Press [Enter] to end MaxiNet")
+input()
 exp.stop()

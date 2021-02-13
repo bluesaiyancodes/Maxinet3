@@ -1,5 +1,5 @@
 import atexit
-from configparser import RawConfigParser
+from six.moves.configparser import ConfigParser as RawConfigParser
 from mininet.topo import Topo
 import logging
 import os
@@ -9,6 +9,7 @@ import subprocess
 import tempfile
 import threading
 import time
+import sys
 
 import Pyro4
 
@@ -21,7 +22,7 @@ Pyro4.config.SERIALIZER = 'pickle'
 class MaxiNetConfig(RawConfigParser):
 
     def __init__(self, file=None, register=False, **args):
-        RawConfigParser.__init__(self, **args)
+        RawConfigParser.__init__(self, interpolation=None, **args)
         self.logger = logging.getLogger(__name__)
         self.daemon = None
         if(file is None):
@@ -76,7 +77,7 @@ class MaxiNetConfig(RawConfigParser):
     @Pyro4.expose
     def run_with_1500_mtu(self):
         if(self.has_option("all","runWith1500MTU")):
-            return self.getboolean("all","runWith1500MTU")
+            return self.getboolean("all", "runWith1500MTU")
         return False
 
     @Pyro4.expose
@@ -101,7 +102,7 @@ class MaxiNetConfig(RawConfigParser):
 
     @Pyro4.expose
     def get_loglevel(self):
-        lvl = self.get("all", "logLevel")
+        lvl = self.get("all", "logLevel").split(" ")[0]
         lvls = {"CRITICAL": logging.CRITICAL,
                 "ERROR": logging.ERROR,
                 "WARNING": logging.WARNING,
@@ -129,11 +130,11 @@ class MaxiNetConfig(RawConfigParser):
             self.daemon_thread = None
 
     @Pyro4.expose
-    def get(self, section, option):
-        return RawConfigParser.get(self, section, option)
-
+    def get(self, section, option, **kwargs):
+        return RawConfigParser.get(self, section, option, **kwargs)
+    
     @Pyro4.expose
-    def set(self, section, option, val):
+    def set(self, section, option, val, **kwargs):
         return RawConfigParser.set(self, section, option, val)
 
     @Pyro4.expose
@@ -149,12 +150,12 @@ class MaxiNetConfig(RawConfigParser):
         return RawConfigParser.has_option(self, section, option)
 
     @Pyro4.expose
-    def getint(self, section, option):
-        return RawConfigParser.getint(self, section, option)
+    def getint(self, section, option, **kwargs):
+        return RawConfigParser.getint(self, section, option, **kwargs)
 
     @Pyro4.expose
-    def getboolean(self, section, option):
-        return RawConfigParser.getboolean(self, section, option)
+    def getboolean(self, section, option, **kwargs):
+        return RawConfigParser.getboolean(self, section, option, **kwargs)
 
 class SSH_Tool(object):
 
@@ -180,7 +181,7 @@ class SSH_Tool(object):
 
         #workaround: for some reason ssh-ing into localhost using localhosts external IP does not work.
         #hence, we replace the external ip with localhost if necessary.
-        local = subprocess.check_output("ip route get %s" % rip, shell=True)
+        local = subprocess.check_output("ip route get %s" % rip, shell=True).decode(sys.stdout.encoding)
         if (local[0:5] == "local"):
             rip = "localhost"
 
@@ -206,7 +207,7 @@ class SSH_Tool(object):
     def get_scp_put_cmd(self, targethostname, local, remote, opts=None):
         rip = self.config.get_worker_ip(targethostname)
 
-        loc = subprocess.check_output("ip route get %s" % rip, shell=True)
+        loc = subprocess.check_output("ip route get %s" % rip, shell=True).decode(sys.stdout.encoding)
         if (loc[0:5] == "local"):
             rip = "localhost"
 
@@ -224,7 +225,7 @@ class SSH_Tool(object):
     def get_scp_get_cmd(self, targethostname, remote, local, opts=None):
         rip = self.config.get_worker_ip(targethostname)
 
-        loc = subprocess.check_output("ip route get %s" % rip, shell=True)
+        loc = subprocess.check_output("ip route get %s" % rip, shell=True).decode(sys.stdout.encoding)
         if (loc[0:5] == "local"):
             rip = "localhost"
 
@@ -242,7 +243,7 @@ class SSH_Tool(object):
     def get_rsync_put_cmd(self, targethostname, local, remote, opts=None):
         rip = self.config.get_worker_ip(targethostname)
 
-        loc = subprocess.check_output("ip route get %s" % rip, shell=True)
+        loc = subprocess.check_output("ip route get %s" % rip, shell=True).decode(sys.stdout.encoding)
         if (loc[0:5] == "local"):
             rip = "localhost"
 
@@ -263,7 +264,7 @@ class SSH_Tool(object):
     def get_rsync_get_cmd(self, targethostname, remote, local, opts=None):
         rip = self.config.get_worker_ip(targethostname)
 
-        loc = subprocess.check_output("ip route get %s" % rip, shell=True)
+        loc = subprocess.check_output("ip route get %s" % rip, shell=True).decode(sys.stdout.encoding)
         if (loc[0:5] == "local"):
             rip = "localhost"
 
@@ -284,7 +285,7 @@ class SSH_Tool(object):
     def add_known_host(self, ip):
         with open(self.known_hosts, "a") as kh:
             fp = subprocess.check_output(["ssh-keyscan", "-p",
-                                          str(self.config.get_sshd_port()), ip])
+                                          str(self.config.get_sshd_port()), ip]).decode(sys.stdout.encoding)
             kh.write(fp)
 
     def _cleanup(self):
@@ -383,5 +384,7 @@ class Tools(object):
 
     @staticmethod
     def guess_ip():
-        ip = subprocess.check_output("ifconfig -a | awk '/(cast)/ { print $2 }' | cut -d':' -f2 | head -1", shell=True)
+        ips = subprocess.check_output("ifconfig -a | awk '/(cast)/ { print $2 }' | cut -d':' -f2", shell=True)
+        ip_list = str(ips)[1:].replace("'", "").split("\\n")
+        ip = subprocess.check_output("ifconfig -a | awk '/(cast)/ { print $2 }' | cut -d':' -f2 | head -1", shell=True).decode(sys.stdout.encoding).strip()
         return ip.strip()

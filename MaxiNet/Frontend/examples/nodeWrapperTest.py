@@ -1,4 +1,5 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
+
 """ An experiment for testing all methods in attributes available via the NodeWrapper.
 
 Tests which methods and attributes are callable and which do produce errors.
@@ -21,7 +22,7 @@ def call_method(node, cmd, *params1, **params2):
         traceback.print_exc()
     if ok:
         print("\tOKAY")
-    print
+    print ("")
 
 
 def get_attribute(node, attribute):
@@ -35,7 +36,7 @@ def get_attribute(node, attribute):
         traceback.print_exc()
     if ok:
         print("\tOKAY")
-    print
+    print("")
 
 
 topo = Topo()

@@ -179,7 +179,7 @@ class CLI(Cmd):
                 user = subprocess.check_output(
                         sshtool.get_ssh_cmd(targethostname=hn,
                                             cmd="echo $USER", opts=["-t"])
-                       ).strip()
+                       ).strip().decode(sys.stdout.encoding)
                 opts=["-t","-X"]
                 if not blocking:
                     opts.append("-n")

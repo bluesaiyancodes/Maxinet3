@@ -1,4 +1,4 @@
-#!/usr/bin/env python2
+#!/usr/bin/env python3
 """ An example showing all available methods and attributes of the NodeWrapper for Docker hosts.
 """
 
