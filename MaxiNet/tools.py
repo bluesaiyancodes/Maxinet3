@@ -384,7 +384,13 @@ class Tools(object):
 
     @staticmethod
     def guess_ip():
-        ips = subprocess.check_output("ifconfig -a | awk '/(cast)/ { print $2 }' | cut -d':' -f2", shell=True)
-        ip_list = str(ips)[1:].replace("'", "").split("\\n")
+        ips = subprocess.check_output("ifconfig -a | awk '/(cast)/ { print $2 }' | cut -d':' -f2", shell=True).decode(sys.stdout.encoding)
+        print("Choose IP of current device: ")
+        ip_list = ips.replace("'", "").split("\n")
+        for i in range(0, len(ip_list)):
+            print(str(i) + ": " + str(ip_list[i]))
+        choice = int(input("Choice - "))
+        print("Chosen IP -> " + str(ip_list[choice]))
+        return ip_list[choice]
         ip = subprocess.check_output("ifconfig -a | awk '/(cast)/ { print $2 }' | cut -d':' -f2 | head -1", shell=True).decode(sys.stdout.encoding).strip()
         return ip.strip()
