@@ -5,6 +5,8 @@ import subprocess
 import sys
 import time
 import traceback
+import ast
+from MaxiNet.Frontend.container import Docker
 
 
 class CLI(Cmd):
@@ -133,6 +135,97 @@ class CLI(Cmd):
             else:
                 self.default(node + " xterm -title MaxiNet-" + node + " &")
                 time.sleep(0.2)
+
+    def do_addhost(self, s):
+        "Add host to the topology at the run time. args -> <name, wid (optional), cls (optional), ip, dimage (optionl)>\n example-> addhost h10 wid=0 cls=Docker ip=10.0.0.3 dimage=ubuntu:trusty"
+        cmd_list = s.split(" ")
+       # print(cmd_list)
+        ip = [s for s in cmd_list if "ip" in s]
+        wid = [s for s in cmd_list if "wid" in s]
+        cls = [s for s in cmd_list if "cls" in s]
+        dimage = [s for s in cmd_list if "dimage" in s]
+
+        if not len(ip):
+            print("Ip address for host not provided.")
+            return
+        if len(dimage):
+            if len(cls) == 0 or cls[0].split("=")[1]==None:
+                print("cls is not set to Docker")
+                return
+            if len(wid):
+                self.experiment.addHost(name=cmd_list[0], wid=wid[0].split("=")[1], cls=Docker, ip=ip[0].split("=")[1], dimage=dimage[0].split("=")[1])
+            else:
+                self.experiment.addHost(name=cmd_list[0], cls=Docker,ip=ip[0].split("=")[1], dimage=dimage[0].split("=")[1])
+        else:
+            if len(wid):
+                self.experiment.addHost(name=cmd_list[0], wid=wid[0].split("=")[1], ip=ip[0].split("=")[1])
+            else:
+                self.experiment.addHost(name=cmd_list[0], ip=ip[0].split("=")[1])
+    
+    def do_addswitch(self, s):
+        "Add Switch to the topology at run time. args -> <name, wid (optional)> \n example -> addswitch s10 wid=0"
+        cmd_list = s.split(" ")
+        wid = [s for s in cmd_list if "wid" in s]
+        if len(wid):
+            self.experiment.addSwitch(name=cmd_list[0], wid=wid[0].split("=")[1])
+        else:
+            self.experiment.addSwitch(name=cmd_list[0])
+
+    def do_addlink(self, s):
+        """ Add link to the topography at runtime.
+
+        args -> <node1, node2, autoconf, bw (optional), delay (optional), intfname1 (optional), params1 (optional)>
+        example -> addlink node1=f1 node2=f2 autoconf=true bw=25 delay=50ms intfname1=f1-eth1 params={'ip':'10.0.2/8'}
+
+        """
+        cmd_list = s.split(" ")
+        node1 = [s for s in cmd_list if "node1" in s]
+        node2 = [s for s in cmd_list if "node2" in s]
+        port1 = [s for s in cmd_list if "port1" in s]
+        port2 = [s for s in cmd_list if "port2" in s]
+        autoconf = [s for s in cmd_list if "autoconf" in s]
+        bw = [s for s in cmd_list if "bw" in s]
+        delay = [s for s in cmd_list if "delay" in s]
+        intfname1 = [s for s in cmd_list if "intfname1" in s]
+        params1 = [s for s in cmd_list if "params1" in s]
+
+        if len(node1) == 0 or len(node2) == 0:
+            print("Provide host names where link will be attached")
+            return
+        
+        if len(autoconf):
+            if autoconf[0].split("=")[1] == "True" or autoconf[0].split("=")[1] == "true":
+                autoconf = True
+            else:
+                autoconf = False
+
+        if len(bw):
+            bw = int(bw[0].split("=")[1])
+            if len(delay):
+                self.experiment.addLink(node1=node1[0].split("=")[1], node2=node2[0].split("=")[1], autoconf=autoconf, bw=bw, delay=delay[0].split("=")[1])
+            else:
+                 self.experiment.addLink(node1=node1[0].split("=")[1], node2=node2[0].split("=")[1], autoconf=autoconf, bw=bw)
+
+        if len(intfname1):
+            if not len(params1):
+                print("Provide parameters for interface")
+                return
+
+        if len(params1):
+            if not len(intfname1):
+                print("Provide interface name")
+                return
+            params1 = ast.literal_eval(params1[0].split("=")[1])
+
+            if len(bw):
+                if len(delay):
+                    self.experiment.addLink(node1=node1[0].split("=")[1], node2=node2[0].split("=")[1], autoconf=autoconf, intfname1=intfname1[0].split("=")[1], params1=params1, bw=bw, delay=delay[0].split("=")[1])
+                else:
+                    self.experiment.addLink(node1=node1[0].split("=")[1], node2=node2[0].split("=")[1], autoconf=autoconf, intfname1=intfname1[0].split("=")[1], params1=params1, bw=bw)
+            else:
+                    self.experiment.addLink(node1=node1[0].split("=")[1], node2=node2[0].split("=")[1], autoconf=autoconf, intfname1=intfname1[0].split("=")[1], params1=params1)
+
+
 
     def do_exit(self, s):
         """Exit"""

@@ -3,6 +3,8 @@ install:
 	mkdir -p /usr/local/share/MaxiNet
 	cp -rv MaxiNet/Frontend/examples /usr/local/share/MaxiNet/
 	chmod +x /usr/local/share/MaxiNet/examples/*
+	cp -rv MaxiNet/Frontend/dev /usr/local/share/MaxiNet/
+	chmod +x /usr/local/share/MaxiNet/dev/*
 	cp share/MaxiNet-cfg-sample /usr/local/share/MaxiNet/config.example
 	cp share/maxinet_plot.py changelog.txt INSTALL.txt LICENSE.txt /usr/local/share/MaxiNet/
 

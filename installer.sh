@@ -1,8 +1,8 @@
 #!/bin/bash
 
-echo "MaxiNet 1.2 installer"
+echo "MaxiNet 3 installer"
 echo ""
-echo "This program installs MaxiNet 1.2 and all requirements to the home directory of your user"
+echo "This program installs MaxiNet 3 and all requirements to the home directory of your user"
 
 if [ "$1" == "--help" ] || [ "$1" == "-h" ]
 then
