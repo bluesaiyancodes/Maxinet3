@@ -21,7 +21,7 @@ to run MaxiNet on an untrusted or publicly accessible network.
 ### Set Python3 as default
 > sudo update-alternatives --install /usr/bin/python python /usr/bin/python3 10
 ### 1. Install dependencies
-> sudo apt-get install git autoconf screen cmake build-essential sysstat python-matplotlib uuid-runtime python3-pip
+> sudo apt-get install git autoconf screen cmake build-essential sysstat python3-matplotlib uuid-runtime python3-pip -y
 
 ### 2. Install mininet OR ContainerNet
 
@@ -33,7 +33,7 @@ to run MaxiNet on an untrusted or publicly accessible network.
 > sudo mininet/util/install.sh -a
 
 ##### ContainerNet
-> sudo apt-get install ansible aptitude
+> sudo apt-get install ansible aptitude -y
 
 > cd ~/Documents/
 
