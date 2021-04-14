@@ -23,12 +23,23 @@ to run MaxiNet on an untrusted or publicly accessible network.
 ### 1. Install dependencies
 > sudo apt-get install git autoconf screen cmake build-essential sysstat python-matplotlib uuid-runtime python3-pip
 
-### 2. Install mininet 
+### 2. Install mininet OR ContainerNet
+
+##### Mininet
 > cd ~/Documents/
 
 > git clone git://github.com/mininet/mininet
 
 > sudo mininet/util/install.sh -a
+
+##### ContainerNet
+> sudo apt-get install ansible aptitude
+
+> cd ~/Documents/
+
+> cd containernet/ansible && sudo ansible-playbook -i "localhost," -c local install.yml
+
+> cd .. && sudo make install
 
 ### 3. Install metis
 > cd ~/Documents/
@@ -53,11 +64,9 @@ to run MaxiNet on an untrusted or publicly accessible network.
 ### 5. Download and install MaxiNet
 > cd ~/Documents
 
-> git clone https://github.com/bluesaiyancodes/Maxinet3.git
+> cd MaxiNet3
 
-> cd MaxiNet
-
-> git checkout 3.5
+> git checkout 0.1
 
 > sudo make install
 
